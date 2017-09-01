@@ -24,11 +24,12 @@ class Evaluator(object):
     def get_precision(self, label):
         return float(self.counts[label]['tp'])/(self.counts[label]['tp'] + self.counts[label]['fp'])
 
-
     def get_recall(self, label):
         return float(self.counts[label]['tp'])/(self.counts[label]['tp'] + self.counts[label]['fn'])
 
     def get_f1(self, label):
         p = self.get_precision(label)
         r = self.get_recall(label)
+        if p==0 and r==0:
+            return 0
         return 2*((p*r)/(p+r))

@@ -19,7 +19,7 @@ class PhraseExtractor(object):
         for sent in segmented_text.sents:
             phrases.extend([s.orth_ for s in sent.noun_chunks])
         phrase_tuples = self._get_phrase_dict(phrases)
-        top_n_phrases = self._pick_top_n_phrases(phrase_tuples)
+        top_n_phrases = self._pick_top_n_phrases(phrase_tuples, n)
         return top_n_phrases
 
     def extract_top_n_phrases_METHOD2(self, text, n=10):
@@ -35,7 +35,7 @@ class PhraseExtractor(object):
         for sent in segmented_text.sents:
             phrases.extend([s.text for s in self.iter_phrases(sent)])
         phrase_tuples = self._get_phrase_dict(phrases)
-        top_n_phrases = self._pick_top_n_phrases(phrase_tuples)
+        top_n_phrases = self._pick_top_n_phrases(phrase_tuples, n)
         return top_n_phrases
 
 
@@ -101,6 +101,24 @@ class PhraseExtractor(object):
             if len(final_n) == n:
                 return final_n
         return final_n
+
+    def get_ner_tags(self, full_text):
+        segmented_text = self.segmentor(full_text)
+        text=list()
+        i=0
+        while i < len(segmented_text):
+            if segmented_text[i].ent_type !=0:
+                ent = segmented_text[i].ent_type
+                text.append(segmented_text[i].ent_type_)
+                # consume all the rest of the matching tags
+                while i<len(segmented_text) and segmented_text[i].ent_type == ent:
+                    i+=1
+            else:
+                if not segmented_text[i].is_stop:
+                    text.append(segmented_text[i].orth_)
+                i+=1
+        subbed_text = ' '.join(text)
+        return subbed_text
 
 
 class Phrase(object):

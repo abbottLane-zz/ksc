@@ -4,6 +4,9 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.svm import LinearSVC
 
+from Extraction.PhraseExtractor import PhraseExtractor
+from Regex_Entities.regex_entities import sub_journalism_terms, sub_photography_terms, sub_food_terms
+
 
 class TextClassificationModel(object):
     def __init__(self):
@@ -66,20 +69,14 @@ class TextClassificationModel(object):
         :return: list of feature vectors x
         '''
         feature_dicts = list()
+        extractor = PhraseExtractor()
         for t in training_instances:
-            # feature_dict = {
-            #     'handle=' + t.handle: True,
-            #     'bio_contains_link=' + self._contains_link(tweet.text): True,
-            #     'num_followers=' + self._num_followers_bucketed(tweet.followers): True,
-            #     'bio_first_pers_pron=' + self._contains_fpp(tweet.desc): True,
-            #     'handle_ctns_coin_lex=' + self._has_coin_lex(tweet.desc): True,
-            #     'num_hashtags=' + self._count_hashtags(tweet.text): True,
-            #     'years_ago_acct_created=' + self._get_years_ago(tweet.user_created): True,
-            #     'has_vowels_in_handle=' + self._has_vowels(tweet.handle): True
-            # }
             feature_dict={}
-            feature_dict.update(self._get_ngram_feats(t['full_text']))
-            feature_dict.update(self._get_ngram_feats(t['blurb']))
+            full_text = t['blurb'] + " " + t['full_text']
+            NER_tagged_text = extractor.get_ner_tags(full_text)
+            NER_tagged_text_and_regex_replaced = self.tag_entities(NER_tagged_text)
+            feature_dict.update(self._get_ngram_feats(NER_tagged_text_and_regex_replaced))
+            feature_dict.update(self._get_ngram_feats(NER_tagged_text_and_regex_replaced, n=2))
             feature_dicts.append(feature_dict)
         return feature_dicts
 
@@ -121,3 +118,9 @@ class TextClassificationModel(object):
 
     def load_ch2(self, ch2_path):
         self.ch2 = joblib.load(ch2_path)
+
+    def tag_entities(self, text):
+        text= sub_journalism_terms(text)
+        text= sub_photography_terms(text)
+        text=sub_food_terms(text)
+        return text

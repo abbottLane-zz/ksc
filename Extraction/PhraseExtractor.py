@@ -102,6 +102,23 @@ class PhraseExtractor(object):
                 return final_n
         return final_n
 
+    def get_ner_tags(self, full_text):
+        segmented_text = self.segmentor(full_text)
+        text=list()
+        i=0
+        acceptable_ner_tags = {"PERSON"}
+        while i < len(segmented_text):
+            if segmented_text[i].ent_type_ in acceptable_ner_tags:
+                ent = segmented_text[i].ent_type
+                text.append(segmented_text[i].ent_type_)
+                # consume all the rest of the matching tags
+                while i<len(segmented_text) and segmented_text[i].ent_type == ent:
+                    i+=1
+            else:
+                text.append(segmented_text[i].orth_)
+                i+=1
+        subbed_text = ' '.join(text)
+        return subbed_text
 
 class Phrase(object):
     '''

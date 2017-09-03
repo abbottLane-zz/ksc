@@ -1,6 +1,6 @@
 import re
 '''
-This is a library of regex patterns I was contemplating using to create features by collapsing topical terms. Empirically, 
+This is a library of regex patterns I was contemplating using to create features by collapsing topical terms. Theoretically, the logic behind this attempt at dimension reduction was flawed, and empirically, 
 this hurt classification performance, so none of this code is being used.
 '''
 def sub_journalism_terms(text):

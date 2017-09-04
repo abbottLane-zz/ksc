@@ -1,4 +1,3 @@
-##Set directories
 from DataLoading.DataLoader import DataLoader
 from Extraction.TextClassfModel import TextClassificationModel
 
@@ -17,7 +16,7 @@ def main():
     model.train(train_data)
     model.dump_model(model_out_dir)
     model.dump_vectorizer(vectorizer_out_dir)
-    print("Model training complete.")
+    print("Model trained on " + str(len(train_data)) + " Kickstarter pitches.")
 
 if __name__=="__main__":
     main()

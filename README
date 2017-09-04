@@ -1,0 +1,40 @@
+###################################################
+##  Kickstarter Text Classification: README  ######
+###################################################
+
+Hey there. There are three top-level pipeline scripts that I should probably describe here:
+
+1. classify.py -
+
+    This is the script you use to classify new pitches against my best trained classification model.
+
+    USAGE:
+        python3 classify.py /path/to/JSON/file/containing/data.json
+
+    That's it. One argument which points to the JSON data file containing pitches in the same format as the training
+    data I used to develop my system. The output of the system is TBD, I sent an email to clarify exactly what it should
+    look like. I'll update this description when I hear back. (Right now I just print the list of predicted classes.
+    Pretty useless on its own...)
+
+    The last two scripts described below are just FYI, this is the only script necessary to use my classification model
+    for prediction.
+
+2. train_model.py -
+
+    This pipeline trains a text classification model on all the available data. Used to produce my final model which
+    will be scored against the Textio holdout data set. Model is stored automatically in Data/final_model
+
+    Can be run as-is, without any command line arguments.
+
+3. train_test_dev.py -
+
+    This is the pipeline I used to simultaneously train and test my models in an iterative fashion as part of the
+    development process. The data loading process divides the input data into and 80:20 training and test split.
+    The model is trained and stored in the Data/dev_models folder, and is immediately reloaded again by the testing
+    process which predicts labels for the test split and evaluates the model's performance.
+
+    Performance metrics are calculated on a per-class basis, and printed to stdout. A directory structure is also generated
+    under Data/eval_data which sorts predictions by label into true positive, false positive, and false negative buckets.
+    This greatly facilitates the manual error analysis process.
+
+    Can be run as-is, without any arguments.

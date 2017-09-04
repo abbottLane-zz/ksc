@@ -1,7 +1,11 @@
 import operator
 import spacy
 from spacy.symbols import *
-
+'''
+This Phrase Extractor was used in various experiments to extract phrases as features for text classification. 
+It's also used as a wrapper for the spaCy text processing model. While features such as phrases and NER tagging did not 
+lead to improvements for this task, this class could still be useful in other applications. 
+'''
 class PhraseExtractor(object):
     def __init__(self):
         self.segmentor = spacy.load('en')

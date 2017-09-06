@@ -1,10 +1,10 @@
 import re
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 import spacy
 from Extraction.PhraseExtractor import PhraseExtractor
-
+from Regex.regex_patterns import sub_journalism_terms, sub_performing_arts_terms, sub_craft_terms
 
 
 class TextClassificationModel(object):
@@ -17,27 +17,27 @@ class TextClassificationModel(object):
         self.segmentor = spacy.load('en')
 
 
-    def train(self, pitch):
+    def train(self, pitches):
         '''
         Trains a document classification model based on the detected target labels and a list of Kickstarter JSON
         objects containing harvest-able text
         :param pitch: a JSON object with (at least) 'blurb', 'full_text', 'title', and 'category' fields
         :return: True if model trained successfully, False otherwise
         '''
-        full_text = self.preprocess_text([x['title'] + " " + x['blurb'] + " " + x['full_text'] for x in pitch])
+        full_text = self.preprocess_text([x['title'] + " " + x['blurb'] + " " + x['full_text'] for x in pitches])
         x_train = self.vectorizer.fit_transform(full_text)
-        y_train = self._get_labels(pitch)
+        y_train = self._get_labels(pitches)
         self.classifier = LinearSVC()
         self.classifier.fit(x_train, y_train)
 
-    def predict(self, pitch):
+    def predict(self, pitches):
         '''
         Given a pitch dictionary object, extract the text, vectorize it, and use the model to make predictions
         :param pitch: a JSON object with (at least) 'blurb', 'full_text', and 'title' fields
         :return:
         '''
         if self.classifier:
-            full_text = self.preprocess_text([x['title'] + " " + x['blurb'] + " " + x['full_text'] for x in pitch])
+            full_text = self.preprocess_text([x['title'] + " " + x['blurb'] + " " + x['full_text'] for x in pitches])
             x_test = self.vectorizer.transform(full_text)
             return self.classifier.predict(x_test)
         else:
@@ -60,8 +60,13 @@ class TextClassificationModel(object):
         joblib.dump(self.classifier, out_dir)
 
 
-    def _get_labels(self, docs):
-        return [d['category'] for d in docs]
+    def _get_labels(self, pitch_json):
+        '''
+        Returns all the pitch labels in a list
+        :param docs: pitch labels (list)
+        :return:
+        '''
+        return [d['category'] for d in pitch_json]
 
     def dump_vectorizer(self, out_dir):
         '''
@@ -89,6 +94,9 @@ class TextClassificationModel(object):
         for t in pitches:
             lower_t = t.lower()
             stripped = re.sub('[.,?\'$%&:;!()\"#@]', "",lower_t)
-            #subbed = pe.get_ner_tags(stripped)
-            subbed_texts.append(stripped)
+            subbed = sub_performing_arts_terms(stripped)
+            subbed = sub_craft_terms(subbed)
+            subbed = sub_journalism_terms(subbed)
+            #pos_tagged = pe.tag_pos(t)
+            subbed_texts.append(subbed)
         return subbed_texts

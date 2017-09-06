@@ -106,6 +106,10 @@ class PhraseExtractor(object):
                 return final_n
         return final_n
 
+    def tag_pos(self, full_text):
+        segmented_text = self.segmentor(full_text)
+        return ' '.join([x.orth_.lower() + "_"+ x.pos_ for x in segmented_text])
+
     def get_ner_tags(self, full_text):
         segmented_text = self.segmentor(full_text)
         text=list()

@@ -9,12 +9,10 @@ def main(data_dir):
     vectorizer_out_dir = "Data/final_model/vectorizers/kick_classf.vec"
 
     ## Load data
-    print("Loading data ...")
     dl = DataLoader(data_dir)
     data = dl.get_full_dataset()
 
     ## predict
-    print("Predicting class labels for data at " + data_dir + ", one moment please...")
     model = TextClassificationModel()
     model.load_model(model_out_dir)
     model.load_vectorizer(vectorizer_out_dir)

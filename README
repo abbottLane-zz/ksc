@@ -10,13 +10,14 @@ Hey there. There are three top-level pipeline scripts that I should probably des
 
     USAGE:
         python3 classify.py /path/to/JSON/file/containing/data.json
+        EG: python3 classify.py ./Data/mini_corpus.json
 
     That's it. One argument which points to the JSON data file containing pitches in the same format as the training
     data I used to develop my system. The output of the system is TBD, I sent an email to clarify exactly what it should
     look like. I'll update this description when I hear back. (Right now I just print the list of predicted classes.
     Pretty useless on its own...)
 
-    The last two scripts described below are just FYI, this is the only script necessary to use my classification model
+    The last two scripts described below are just FYI, this^ is the only script necessary to use my classification model
     for prediction.
 
 2. train_model.py -

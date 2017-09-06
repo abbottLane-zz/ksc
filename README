@@ -2,6 +2,11 @@
 ##  Kickstarter Text Classification: README  ######
 ###################################################
 
+Dependencies:
+   scikit-learn
+   spaCy
+
+
 Hey there. There are three top-level pipeline scripts that I should probably describe here:
 
 1. classify.py -
